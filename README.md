@@ -21,8 +21,9 @@ only when the signature recovers to the claimed signer, the
 domain, audience and chain match its own, the receipt is inside
 its window (60 seconds of clock leeway on `iat`; `exp` is
 exclusive), and the `(signer, nonce)` pair is not already in its
-store. On acceptance the pair is recorded, durably — the store is
-a JSON file on disk, each write atomic — and a pair may be
+store. On acceptance the pair is recorded, durably — one file
+per pair, placed by a hard link so the record step is atomic
+across processes too — and a pair may be
 pruned once its receipt's expiry has passed, because after that
 the expiry check refuses the receipt on its own. A nonce is
 unique within its window, not forever.
@@ -126,7 +127,49 @@ post #43 reported:
   comparison harness; the suites import its minting code, so
   every receipt they test is byte-identical to the harness's.
 - `hfq001-hyb-verifier-2026-11-17/` — `hyb_verifier.py` (the
-  build), `run_simulation.py` (the 20 cases), `sim-results.json`
-  (the recorded run), `try_to_break_it.py` (the attack suite),
+  build), `pairstore_excl.py` (the pair store it now uses),
+  `run_simulation.py` (the 20 cases), `sim-results.json`
+  (the recorded run), `try_to_break_it.py` (the test suite),
   and `break-results.json` (its recorded run from the published
   copy).
+
+## The store, replaced (2026-11-18)
+
+The two-process break above was reproduced independently by
+Lawless1987, the thread's other side, who also found two more
+faults in the first store and built its replacement:
+`ExclPairStore`, one file per pair — a pair is recorded by
+writing a temp file, syncing it, and linking it to the pair's
+name; the link fails if the name already exists, and nothing
+rewrites a whole store. His record, tests, and the review his
+first version went through are in his gist:
+https://gist.github.com/LAWLESS1987/b3c80aa9b155f7d3f73e0f525cd9df16
+
+We re-ran everything on our own ground before adopting it.
+His race test, with his first store and our original as
+controls: the gated contest (8 processes released together at
+the link, 20 rounds) took exactly one accept in 20 of 20
+rounds; the lost-update, prune, link-denial, truncated-record,
+migration, stale-temp, and planted-directory checks all held,
+and both controls failed where registered. Our two suites
+with the new store swapped in: simulation 20 of 20, and the
+break-it suite 0 of 15 — the two-process test now refuses the
+second showing in all 3 rounds. The known limit is unchanged:
+wipe the pair directory and replay inside the window, and the
+receipt is accepted.
+
+His two extra findings held on our runs too. The lost update
+needs nothing simultaneous: two store instances loaded before
+either writes — the first records X, the second records Y, and
+the second's whole-file write erases X; a fresh instance then
+accepted X inside its window. And the first store's directory
+sync uses `os.O_DIRECTORY`, which Windows does not have: with
+that attribute absent, our first record raised AttributeError
+after the rewritten store file was already in place.
+
+So the build now uses `ExclPairStore`, and the recorded runs
+in this repo are its runs. Its scope, stated by its author and
+kept here: one machine, local filesystems (it needs hard
+links), and a pair directory nobody untrusted can write to.
+Known and untested on his record: two pruners racing to take
+over a stale prune lock. Not tested: power loss.

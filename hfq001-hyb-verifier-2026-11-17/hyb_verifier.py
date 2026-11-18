@@ -239,5 +239,9 @@ def _cli(argv):
     return 0
 
 
+# --- proposed: a cross-process pair-store (pairstore_excl.py) ---
+from pairstore_excl import ExclPairStore as PairStore  # noqa: E402
+
+
 if __name__ == "__main__":
     sys.exit(_cli(sys.argv[1:]))

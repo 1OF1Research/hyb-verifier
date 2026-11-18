@@ -100,13 +100,13 @@
    "observed": "reject"
   },
   {
-   "agree": false,
-   "break": true,
+   "agree": true,
+   "break": false,
    "case": "race-two-processes",
    "detail": "two processes, one store file, the same receipt at the same moment",
    "expected": "accept/reject in each of 3 rounds",
    "known_limit": false,
-   "observed": "accept/accept; accept/accept; accept/accept"
+   "observed": "accept/reject; accept/reject; accept/reject"
   },
   {
    "agree": true,
@@ -136,7 +136,7 @@
    "observed": "accept/accept"
   }
  ],
- "breaks": 1,
+ "breaks": 0,
  "gate": "PASS (RFC 8785 Appendix B + 3.2.3 + 3.2.4)",
  "suite": "try_to_break_it.py — attacks on hyb_verifier.py",
  "total": 15
