@@ -1,0 +1,168 @@
+{
+ "agree": 20,
+ "cases": [
+  {
+   "agree": true,
+   "case": "S1-fresh-valid",
+   "detail": "accepted; (signer, nonce) recorded; store holds 1 pair(s) after",
+   "expected": "accept",
+   "observed": "accept",
+   "source": "brief case 1"
+  },
+  {
+   "agree": true,
+   "case": "S2-replay-in-window",
+   "detail": "clause (d): replay of (signer, nonce)",
+   "expected": "reject",
+   "observed": "reject",
+   "source": "brief case 2; DESIGN W01"
+  },
+  {
+   "agree": true,
+   "case": "S3-first-presentation-after-expiry",
+   "detail": "expired (now >= exp)",
+   "expected": "reject",
+   "observed": "reject",
+   "source": "brief case 3"
+  },
+  {
+   "agree": true,
+   "case": "S4-replay-after-expiry",
+   "detail": "second presentation past exp",
+   "expected": "accept/reject",
+   "observed": "accept/reject",
+   "source": "brief case 4; DESIGN W02"
+  },
+  {
+   "agree": true,
+   "case": "S5-wipe-then-expired",
+   "detail": "state loss, then presentations at +301 s and +30 days",
+   "expected": "accept/reject/reject",
+   "observed": "accept/reject/reject",
+   "source": "brief case 5; DESIGN W06"
+  },
+  {
+   "agree": true,
+   "case": "S5-control-P6-same-steps",
+   "detail": "plain P6 under the same wipes: no expiry exists to reject on — the failure the amendment answers",
+   "expected": "accept/accept/accept",
+   "observed": "accept/accept/accept",
+   "source": "VERDICT W06 control"
+  },
+  {
+   "agree": true,
+   "case": "S6a-tampered-expiry",
+   "detail": "signature does not recover to signer",
+   "expected": "reject",
+   "observed": "reject",
+   "source": "brief case 6"
+  },
+  {
+   "agree": true,
+   "case": "S6b-tampered-signature",
+   "detail": "signature does not recover to signer",
+   "expected": "reject",
+   "observed": "reject",
+   "source": "brief case 6"
+  },
+  {
+   "agree": true,
+   "case": "S7-expiry-boundary",
+   "detail": "presented at exp-1 and at exp exactly",
+   "expected": "accept/reject",
+   "observed": "accept/reject",
+   "source": "DESIGN W07"
+  },
+  {
+   "agree": true,
+   "case": "S8-clock-skew",
+   "detail": "RP clock 120 s behind: iat beyond leeway in the future; RP clock 330 s ahead: expired (now >= exp)",
+   "expected": "reject/reject",
+   "observed": "reject/reject",
+   "source": "DESIGN W08"
+  },
+  {
+   "agree": true,
+   "case": "S9-missing-iat-exp",
+   "detail": "no exp: clause (d): iat/exp missing; no iat: clause (d): iat/exp missing",
+   "expected": "reject/reject",
+   "observed": "reject/reject",
+   "source": "DESIGN W09"
+  },
+  {
+   "agree": true,
+   "case": "S10-pair-keying",
+   "detail": "same nonce, other signer",
+   "expected": "accept/accept",
+   "observed": "accept/accept",
+   "source": "DESIGN W10"
+  },
+  {
+   "agree": true,
+   "case": "S11-in-window-state-loss",
+   "detail": "wipe, then replay still inside the window",
+   "expected": "accept/accept",
+   "observed": "accept/accept",
+   "source": "DESIGN W06; VERDICT honest costs"
+  },
+  {
+   "agree": true,
+   "case": "S12-long-lived-replay",
+   "detail": "30 days later, store intact throughout",
+   "expected": "accept/reject",
+   "observed": "accept/reject",
+   "source": "DESIGN W12"
+  },
+  {
+   "agree": true,
+   "case": "S13-pruned-nonce-reuse",
+   "detail": "prune at +301 s dropped 1 pair(s)",
+   "expected": "accept/accept/reject",
+   "observed": "accept/accept/reject",
+   "source": "extension X1; AMENDMENT"
+  },
+  {
+   "agree": true,
+   "case": "S13-control-unpruned",
+   "detail": "no pruning: the pair stands",
+   "expected": "accept/reject",
+   "observed": "accept/reject",
+   "source": "extension X1 control"
+  },
+  {
+   "agree": true,
+   "case": "S14-durability-across-processes",
+   "detail": "two separate processes, one store file on disk",
+   "expected": "accept/reject",
+   "observed": "accept/reject",
+   "source": "AMENDMENT: the build owes a durable store"
+  },
+  {
+   "agree": true,
+   "case": "S15-reject-records-nothing",
+   "detail": "store held 0 pair(s) after the rejected attempt",
+   "expected": "reject/accept",
+   "observed": "reject/accept",
+   "source": "DESIGN: state changes only on accept"
+  },
+  {
+   "agree": true,
+   "case": "S16-wrong-audience",
+   "detail": "clause (b): audience is not the relying party",
+   "expected": "reject",
+   "observed": "reject",
+   "source": "DESIGN clause (b); S01 step 4"
+  },
+  {
+   "agree": true,
+   "case": "S17-window-cap",
+   "detail": "at cap: accepted; (signer, nonce) recorded; 1 s over: exp-iat window 301s exceeds RP cap 300s",
+   "expected": "accept/reject",
+   "observed": "accept/reject",
+   "source": "extension X2"
+  }
+ ],
+ "gate": "PASS (RFC 8785 Appendix B + 3.2.3 + 3.2.4)",
+ "total": 20,
+ "verifier": "hyb_verifier.py (durable JSON pair-store)"
+}
