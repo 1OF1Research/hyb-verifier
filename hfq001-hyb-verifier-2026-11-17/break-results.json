@@ -1,0 +1,143 @@
+{
+ "attacks": [
+  {
+   "agree": true,
+   "break": false,
+   "case": "replay-in-window",
+   "detail": "the same receipt twice inside its window",
+   "expected": "accept/reject",
+   "known_limit": false,
+   "observed": "accept/reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "wiped-store-expired-301s",
+   "detail": "state loss, then a first showing after expiry",
+   "expected": "accept/reject",
+   "known_limit": false,
+   "observed": "accept/reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "wiped-store-expired-30d",
+   "detail": "state loss, then a first showing thirty days late",
+   "expected": "accept/reject",
+   "known_limit": false,
+   "observed": "accept/reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "prune-then-replay-old",
+   "detail": "prune dropped 1 pair(s); the old receipt returns",
+   "expected": "accept/reject",
+   "known_limit": false,
+   "observed": "accept/reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "prune-nonce-reuse-then-old",
+   "detail": "the fresh receipt is the rule; the old one is the target",
+   "expected": "accept/accept/reject",
+   "known_limit": false,
+   "observed": "accept/accept/reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "expiry-edited",
+   "detail": "signature does not recover to signer",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "signature-touched-inside-r",
+   "detail": "signature does not recover to signer",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "leeway-just-past",
+   "detail": "iat beyond leeway in the future",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "leeway-edge-expiry-stands",
+   "detail": "expired (now >= exp)",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "clock-before-iat",
+   "detail": "iat beyond leeway in the future",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "clock-after-exp",
+   "detail": "expired (now >= exp)",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": false,
+   "break": true,
+   "case": "race-two-processes",
+   "detail": "two processes, one store file, the same receipt at the same moment",
+   "expected": "accept/reject in each of 3 rounds",
+   "known_limit": false,
+   "observed": "accept/accept; accept/accept; accept/accept"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "different-audience",
+   "detail": "clause (b): audience is not the relying party",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "window-over-rp-cap",
+   "detail": "exp-iat window 301s exceeds RP cap 300s",
+   "expected": "reject",
+   "known_limit": false,
+   "observed": "reject"
+  },
+  {
+   "agree": true,
+   "break": false,
+   "case": "KNOWN-LIMIT-wiped-store-replay-in-window",
+   "detail": "the documented limit of the profile, printed as itself",
+   "expected": "accept/accept",
+   "known_limit": true,
+   "observed": "accept/accept"
+  }
+ ],
+ "breaks": 1,
+ "gate": "PASS (RFC 8785 Appendix B + 3.2.3 + 3.2.4)",
+ "suite": "try_to_break_it.py — attacks on hyb_verifier.py",
+ "total": 15
+}
